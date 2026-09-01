@@ -28,9 +28,10 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 
 version = "2026.1"
 
+val isDynamicChain = "IS_DYNAMIC_CHAIN"
 project {
     vcsRoot(HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain)
-    if (!System.getProperty("IS_DYNAMIC_CHAIN").toBoolean()) {
+    if (!System.getProperty(IS_DYNAMIC_CHAIN).toBoolean()) {
         vcsRoot(HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain)
         buildType(FinalStep)
         buildType(Generator)
@@ -99,7 +100,7 @@ object Generator : BuildType({
         script {
             id = "Maven2"
             scriptContent =
-                """/Users/Andre.Rocha/Applications/IntelliJ\ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn org.jetbrains.teamcity:teamcity-configs-maven-plugin:2026.1-eap17:generate -f .teamcity/pom.xml"""
+                """/Users/Andre.Rocha/Applications/IntelliJ\ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn org.jetbrains.teamcity:teamcity-configs-maven-plugin:2026.1-eap17:generate -Dteamcity.versionedSettings.exposeInternalParameters=true -Dteamcity.internal.dsl.IS_DYNAMIC_CHAIN=true -f .teamcity/pom.xml"""
         }
     }
 })
