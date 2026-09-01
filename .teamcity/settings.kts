@@ -1,6 +1,7 @@
 import jetbrains.buildServer.configs.kotlin.*
 import jetbrains.buildServer.configs.kotlin.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
+import jetbrains.buildServer.configs.kotlin.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot
 
 /*
@@ -28,14 +29,17 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 version = "2026.1"
 
 project {
-
     vcsRoot(HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain)
-    vcsRoot(HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain)
-
-    buildType(FinalStep)
-    buildType(Generator)
-    buildType(Snapshot)
-    buildType(DynamicBuildChain)
+    if (!System.getProperty("IS_DYNAMIC_CHAIN").toBoolean()) {
+        vcsRoot(HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain)
+        buildType(FinalStep)
+        buildType(Generator)
+        buildType(Snapshot)
+        buildType(DynamicBuildChain)
+    } else {
+        buildType(Dynamic_Build)
+        buildType(Dynamic_Build2)
+    }
 
     template(DefaultTemplate)
 }
@@ -46,6 +50,8 @@ object DynamicBuildChain : BuildType({
     params {
         param("GENERATOR_BUILD_TYPE_ID", "DynamicBuildChains_Generator")
     }
+
+
 
     steps {
         script {
@@ -92,7 +98,8 @@ object Generator : BuildType({
     steps {
         script {
             id = "Maven2"
-            scriptContent = """/Users/Andre.Rocha/Applications/IntelliJ\ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn org.jetbrains.teamcity:teamcity-configs-maven-plugin:2026.1-eap17:generate -f .teamcity/pom.xml"""
+            scriptContent =
+                """/Users/Andre.Rocha/Applications/IntelliJ\ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn org.jetbrains.teamcity:teamcity-configs-maven-plugin:2026.1-eap17:generate -f .teamcity/pom.xml"""
         }
     }
 })
@@ -121,6 +128,124 @@ object DefaultTemplate : Template({
     }
 })
 
+
+object Dynamic_Build : BuildType({
+    name = "Build"
+
+    artifactRules = """
+        big_file.txt
+        folder1/*.vsix => folder1/
+    """.trimIndent()
+
+    params {
+        param("teamcity.internal.artifactUpload.webPublisher.enableRetrier", "true")
+        param("teamcity.internal.dynamic", "true")
+    }
+
+    vcs {
+        root(AbsoluteId("VcsRootInRoot"))
+        root(HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain)
+    }
+
+    steps {
+        gradle {
+            id = "gradle_runner_1"
+            enabled = false
+            tasks = "clean build"
+            gradleWrapperPath = ""
+        }
+        script {
+            id = "gradle_runner"
+            scriptContent = """
+                #!/bin/bash
+                mkdir folder1
+                dd if=/dev/urandom bs=100 count=1 | base64 > build/test_file.vsix
+                dd if=/dev/urandom bs=100 count=1 | base64 > build/test_file_2.vsix
+                zip -r folder1/meow.vsix build/*
+            """.trimIndent()
+        }
+    }
+
+    triggers {
+        vcs {
+        }
+    }
+    dependencies {
+        dependency(AbsoluteId("DynamicBuildChains_Snapshot")) {
+            snapshot {
+                onDependencyCancel = FailureAction.ADD_PROBLEM
+                reuseBuilds = ReuseBuilds.NO
+            }
+        }
+    }
+})
+
+object Dynamic_Build2 : BuildType({
+    name = "Build2"
+
+    artifactRules = """
+        big_file.txt
+        folder1/*.vsix => folder1/
+        folder2/*.vsix => folder2/
+    """.trimIndent()
+
+
+    params {
+        param("teamcity.internal.artifactUpload.webPublisher.enableRetrier", "true")
+        param("teamcity.internal.dynamic", "true")
+    }
+
+    vcs {
+        root(AbsoluteId("AwsLambdaPluginExample"))
+    }
+
+    steps {
+        gradle {
+            id = "gradle_runner_1"
+            enabled = false
+            tasks = "clean build"
+            gradleWrapperPath = ""
+        }
+        script {
+            id = "gradle_runner"
+            scriptContent = """
+                #!/bin/bash
+                mkdir folder2
+                dd if=/dev/urandom bs=100 count=1 | base64 > build/test_file_3.vsix
+                dd if=/dev/urandom bs=100 count=1 | base64 > build/test_file_4.vsix
+                zip -r folder2/meow.vsix build/*
+            """.trimIndent()
+        }
+    }
+
+    dependencies {
+        dependency(Dynamic_Build) {
+            snapshot {
+            }
+
+            artifacts {
+                cleanDestination = true
+                artifactRules = """
+                    folder1 => folder1
+                """.trimIndent()
+            }
+        }
+
+        dependency(Snapshot) {
+            snapshot {
+                onDependencyCancel = FailureAction.ADD_PROBLEM
+                reuseBuilds = ReuseBuilds.NO
+            }
+        }
+    }
+
+    triggers {
+        vcs {
+        }
+    }
+})
+
+
 object HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain : GitVcsRoot({
     name = "https://github.com/SocksDevil/teamcity-aws-lambda-plugin-example#refs/heads/main"
     url = "https://github.com/SocksDevil/teamcity-aws-lambda-plugin-example"
@@ -132,8 +257,8 @@ object HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain : Git
 })
 
 object HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain : GitVcsRoot({
-    name = "https://github.com/SocksDevil/vcs-settings-dynamic-build-chains#refs/heads/main"
-    url = "https://github.com/SocksDevil/vcs-settings-dynamic-build-chains"
+    name = "https://github.com/SocksDevil/dynamic-build-chains-example#refs/heads/main"
+    url = "https://github.com/SocksDevil/dynamic-build-chains-example"
     branch = "refs/heads/main"
     branchSpec = "refs/heads/*"
     authMethod = password {
