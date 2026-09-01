@@ -100,7 +100,7 @@ object Generator : BuildType({
         script {
             id = "Maven2"
             scriptContent =
-                """JAVA_HOME=~/.asdf/installs/java/corretto-21.0.11.10.1 mvn -Dteamcity.versionedSettings.exposeInternalParameters=true -Dteamcity.internal.dsl.IS_DYNAMIC_CHAIN=true -f .teamcity/pom.xml"""
+                """JAVA_HOME=~/.asdf/installs/java/corretto-21.0.11.10.1 mvn -Dteamcity.versionedSettings.exposeInternalParameters=true -Dteamcity.internal.dsl.IS_DYNAMIC_CHAIN=true teamcity-configs:generate -f .teamcity/pom.xml"""
         }
     }
 })
