@@ -100,7 +100,7 @@ object Generator : BuildType({
         script {
             id = "Maven2"
             scriptContent =
-                """/Users/Andre.Rocha/Applications/IntelliJ\ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn org.jetbrains.teamcity:teamcity-configs-maven-plugin:2026.1-eap17:generate -Dteamcity.versionedSettings.exposeInternalParameters=true -Dteamcity.internal.dsl.IS_DYNAMIC_CHAIN=true -f .teamcity/pom.xml"""
+                """/Users/Andre.Rocha/Applications/IntelliJ\ IDEA.app/Contents/plugins/maven/lib/maven3/bin/mvn teamcity-configs:generate -Dteamcity.versionedSettings.exposeInternalParameters=true -Dteamcity.internal.dsl.IS_DYNAMIC_CHAIN=true -f .teamcity/pom.xml"""
         }
     }
 })
