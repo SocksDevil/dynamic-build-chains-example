@@ -14,5 +14,8 @@ changeProject(DslContext.projectId) {
         add {
             password("agent_username", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
         }
+        add {
+            password("agent_password", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
+        }
     }
 }
