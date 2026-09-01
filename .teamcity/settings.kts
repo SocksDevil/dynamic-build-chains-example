@@ -31,7 +31,7 @@ version = "2026.1"
 val isDynamicChain = "IS_DYNAMIC_CHAIN"
 project {
     vcsRoot(HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain)
-    if (!System.getProperty(IS_DYNAMIC_CHAIN).toBoolean()) {
+    if (!System.getProperty(isDynamicChain).toBoolean()) {
         vcsRoot(HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain)
         buildType(FinalStep)
         buildType(Generator)
