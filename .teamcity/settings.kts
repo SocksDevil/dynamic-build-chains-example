@@ -35,7 +35,6 @@ project {
         params {
             password("agent_username", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
             password("agent_password", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
-
         }
 
         vcsRoot(HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain)
@@ -44,12 +43,17 @@ project {
         buildType(Snapshot)
         buildType(DynamicBuildChain)
     } else {
-        buildType(Dynamic_Build)
-        buildType(Dynamic_Build2)
+        subProject(DynamicPRChecks)
     }
 
     template(DefaultTemplate)
 }
+
+object DynamicPRChecks : Project({
+    name = "Dynamic PR Checks"
+    buildType(Dynamic_Build)
+    buildType(Dynamic_Build2)
+})
 
 object DynamicBuildChain : BuildType({
     name = "Dynamic Build Chain"
@@ -100,6 +104,7 @@ object Generator : BuildType({
 
     params {
         param("DSL_CONTEXT_URL", "${DslContext.serverUrl}/app/dsl-context?projectExtId=${DslContext.projectId}")
+        param("DSL_RELATIVE_ROOT_ID", "${DslContext.projectId}")
     }
 
     vcs {
@@ -116,6 +121,8 @@ object Generator : BuildType({
                     curl -sSf -u "%agent_username%:%agent_password%" -o dsl-context.zip "%DSL_CONTEXT_URL%"
                     
                     JAVA_HOME=~/.asdf/installs/java/corretto-21.0.11.10.1 mvn -Dteamcity.versionedSettings.exposeInternalParameters=true -Dteamcity.internal.dsl.IS_DYNAMIC_CHAIN=true -DserverContext=dsl-context.zip teamcity-configs:generate -f pom.xml
+                    
+                    rm -rf "target/generated-configs/%DSL_RELATIVE_ROOT_ID%"
                     """.trimIndent()
         }
     }
