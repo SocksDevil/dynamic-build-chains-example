@@ -3,6 +3,7 @@ import jetbrains.buildServer.configs.kotlin.buildSteps.gradle
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.triggers.vcs
 import jetbrains.buildServer.configs.kotlin.vcs.GitVcsRoot
+import java.io.File
 
 /*
 The settings script is an entry point for defining a TeamCity
@@ -28,10 +29,9 @@ To debug in IntelliJ Idea, open the 'Maven Projects' tool window (View
 
 version = "2026.1"
 
-val isDynamicChain = "IS_DYNAMIC_CHAIN"
 project {
     vcsRoot(HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain)
-    if (!System.getProperty(isDynamicChain).toBoolean()) {
+    if (!DynamicChainUtils.myParams[DynamicChainUtils.IS_DYNAMIC_CHAIN].toBoolean()) {
         params {
             password("agent_username", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
             password("agent_password", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
@@ -113,7 +113,21 @@ object Generator : BuildType({
 
     steps {
         script {
-            id = "Maven2"
+            name = "Generate dsl params file"
+            id = "Generate_Dsl_Params"
+            scriptContent = """
+                #!/usr/bin/env bash
+                set -euo pipefail
+                
+                cd .teamcity
+                touch ${DynamicChainUtils.PARAMS_FILE}
+                
+                echo "IS_DYNAMIC_CHAIN=true" > ${DynamicChainUtils.PARAMS_FILE}
+            """.trimIndent()
+        }
+
+        script {
+            name = "Generate Settings"
             scriptContent =
                 """
                     cd .teamcity/
@@ -290,3 +304,29 @@ object HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain : GitV
         password = "credentialsJSON:2091df62-b0a6-494c-9dd1-b03db1aaf9c6"
     }
 })
+
+
+object DynamicChainUtils {
+    const val IS_DYNAMIC_CHAIN = "IS_DYNAMIC_CHAIN"
+
+    const val PARAMS_FILE = "params.properties"
+
+    val myParams: Map<String, String> by lazy {
+        try {
+            val file = File(DslContext.baseDir, PARAMS_FILE)
+            if (!file.isFile) return@lazy emptyMap()
+
+            file.readLines()
+                .filter { it.isNotBlank() && !it.startsWith("#") }
+                .mapNotNull { line ->
+                    val i = line.indexOf('=')
+                    if (i <= 0) null else line.take(i).trim() to line.substring(i + 1).trim()
+                }
+                .toMap()
+                .also { println("DYNAMIC_CHAIN_PARAMS " + it.entries.joinToString(",") { e -> "${e.key}=${e.value}" }) }
+        } catch (e: Exception) {
+            println("Unable to read $PARAMS_FILE: ${e.message}")
+            emptyMap()
+        }
+    }
+}
