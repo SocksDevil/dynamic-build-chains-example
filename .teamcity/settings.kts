@@ -114,6 +114,7 @@ object Generator : BuildType({
     steps {
         script {
             name = "Generate dsl params file"
+            enabled = false
             id = "Generate_Dsl_Params"
             scriptContent = """
                 #!/usr/bin/env bash
@@ -128,6 +129,7 @@ object Generator : BuildType({
 
         script {
             name = "Generate Settings"
+            enabled = false
             scriptContent =
                 """
                     cd .teamcity/
@@ -139,6 +141,20 @@ object Generator : BuildType({
                     rm -rf "target/generated-configs/%DSL_RELATIVE_ROOT_ID%"
                     """.trimIndent()
         }
+
+        step {
+            id = "jetbrains_dynamic_build_chain_settings_generator_1_0_0"
+            type = "jetbrains/dynamic-build-chain-settings-generator@1.0.0"
+            param("agent_username", "credentialsJSON:3ef89e54-c228-485b-9fcc-d2c5c27df087")
+            param("plugin.docker.imagePlatform", "")
+            param("agent_password", "credentialsJSON:3ef89e54-c228-485b-9fcc-d2c5c27df087")
+            param("plugin.docker.imageId", "")
+            param("teamcity.step.phase", "")
+            param("SERVER_URL", "%teamcity.serverUrl%")
+            param("plugin.docker.run.parameters", "")
+            param("PROJECT_ID", "DynamicBuildChains")
+        }
+
     }
 })
 
