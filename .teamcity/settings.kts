@@ -145,9 +145,9 @@ object Generator : BuildType({
         step {
             id = "jetbrains_dynamic_build_chain_settings_generator_1_0_0"
             type = "jetbrains/dynamic-build-chain-settings-generator@1.0.0"
-            param("agent_username", "credentialsJSON:3ef89e54-c228-485b-9fcc-d2c5c27df087")
+            param("agent_username", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
             param("plugin.docker.imagePlatform", "")
-            param("agent_password", "credentialsJSON:3ef89e54-c228-485b-9fcc-d2c5c27df087")
+            param("agent_password", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
             param("plugin.docker.imageId", "")
             param("teamcity.step.phase", "")
             param("SERVER_URL", "%teamcity.serverUrl%")
