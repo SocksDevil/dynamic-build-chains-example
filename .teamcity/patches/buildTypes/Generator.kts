@@ -44,6 +44,11 @@ changeBuildType(RelativeId("Generator")) {
             enabled = false
             clearConditions()
         }
+        update<ScriptBuildStep>(1) {
+            id = "RUNNER_1"
+            enabled = false
+            clearConditions()
+        }
         insert(2) {
             step {
                 id = "jetbrains_dynamic_build_chain_settings_generator_1_0_0"
