@@ -1,6 +1,7 @@
 package patches.buildTypes
 
 import jetbrains.buildServer.configs.kotlin.*
+import jetbrains.buildServer.configs.kotlin.buildSteps.ScriptBuildStep
 import jetbrains.buildServer.configs.kotlin.buildSteps.script
 import jetbrains.buildServer.configs.kotlin.ui.*
 
@@ -38,6 +39,11 @@ changeBuildType(RelativeId("Generator")) {
         }
     }
     steps {
+        update<ScriptBuildStep>(0) {
+            id = "Generate_Dsl_Params"
+            enabled = false
+            clearConditions()
+        }
         insert(2) {
             step {
                 id = "jetbrains_dynamic_build_chain_settings_generator_1_0_0"
