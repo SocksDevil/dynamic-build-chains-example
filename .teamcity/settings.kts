@@ -107,36 +107,6 @@ object Generator : BuildType({
     }
 
     steps {
-        script {
-            name = "Generate dsl params file"
-            enabled = false
-            id = "Generate_Dsl_Params"
-            scriptContent = """
-                #!/usr/bin/env bash
-                set -euo pipefail
-                
-                cd .teamcity
-                touch ${DynamicChainUtils.PARAMS_FILE}
-                
-                echo "IS_DYNAMIC_CHAIN=true" > ${DynamicChainUtils.PARAMS_FILE}
-            """.trimIndent()
-        }
-
-        script {
-            name = "Generate Settings"
-            enabled = false
-            scriptContent =
-                """
-                    cd .teamcity/
-                    
-                    curl -sSf -u "%agent_username%:%agent_password%" -o dsl-context.zip "%DSL_CONTEXT_URL%"
-                    
-                    JAVA_HOME=~/.asdf/installs/java/corretto-21.0.11.10.1 mvn -Dteamcity.versionedSettings.exposeInternalParameters=true -Dteamcity.internal.dsl.IS_DYNAMIC_CHAIN=true -DserverContext=dsl-context.zip teamcity-configs:generate -f pom.xml
-                    
-                    rm -rf "target/generated-configs/%DSL_RELATIVE_ROOT_ID%"
-                    """.trimIndent()
-        }
-
         step {
             id = "jetbrains_dynamic_build_chain_settings_generator_1_0_0"
             type = "jetbrains/dynamic-build-chain-settings-generator@1.0.0"
