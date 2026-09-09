@@ -114,6 +114,7 @@ object Generator : BuildType({
             param("agent_password", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
             param("SERVER_URL", "%teamcity.serverUrl%")
             param("PROJECT_ID", "DynamicBuildChains")
+            param("env.input_params", "param1=value,param2=value2")
         }
 
     }
