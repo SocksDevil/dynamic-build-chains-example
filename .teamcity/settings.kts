@@ -32,11 +32,6 @@ version = "2026.1"
 project {
     vcsRoot(HttpsGithubComSocksDevilTeamcityAwsLambdaPluginExampleRefsHeadsMain)
     if (!DynamicChainUtils.myParams[DynamicChainUtils.IS_DYNAMIC_CHAIN].toBoolean()) {
-        params {
-            password("agent_username", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
-            password("agent_password", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
-        }
-
         vcsRoot(HttpsGithubComSocksDevilVcsSettingsDynamicBuildChainsRefsHeadsMain)
         buildType(FinalStep)
         buildType(Generator)
