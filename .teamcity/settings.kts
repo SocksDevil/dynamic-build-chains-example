@@ -110,8 +110,7 @@ object Generator : BuildType({
         step {
             id = "jetbrains_dynamic_build_chain_settings_generator_1_0_0"
             type = "jetbrains/dynamic-build-chain-settings-generator@1.0.0"
-            param("agent_username", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
-            param("agent_password", "credentialsJSON:a54bc4a8-5c6a-4d9e-94df-d55a68d6bc47")
+            param("agent_token", "credentialsJSON:faf07e91-2bfe-479f-b51c-ab2dff63dd10")
             param("SERVER_URL", "%teamcity.serverUrl%")
             param("PROJECT_ID", "DynamicBuildChains")
             param("env.input_params", "param1=value,param2=value2")
