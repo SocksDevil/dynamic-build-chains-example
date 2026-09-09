@@ -1,12 +1,11 @@
 name: jetbrains/dynamic-build-chain-settings-generator
 version: 1.0.0
 title: Dynamic Build Chain Settings Generator
-description: |
-  A two-step recipe that can be used to dynamically generate settings for a build chain.
-  This recipe executes the generation step and publishes the settings as an artifact.
-  This recipe prepares an environment so that the DSL runs as if it were generating settings
-  within the context of your project. To do so, it needs credentials with EDIT permissions to
-  the project. These credentials should be provided as `agent_username` and `agent_password`.
+description: "A two-step recipe that can be used to dynamically generate settings\
+  \ for a build chain.\nThis recipe executes the generation step and publishes the\
+  \ settings as an artifact.\nThis recipe prepares an environment so that the DSL\
+  \ runs as if it were generating settings\nwithin the context of your project. To\
+  \ do so, it needs credentials with EDIT permissions to\nthe project. \n"
 inputs:
   - SERVER_URL:
       type: text
@@ -25,9 +24,9 @@ inputs:
       type: text
       required: false
       label: DSL parameters
-      description: |
-        Additional parameters to write to params.properties, in the
-        'param1=value1,param2=value2' format. Each pair is written on its own line.
+      description: "A list of newline-delimited 'name=value' parameters to write to\
+        \ \nthe 'params.properties' file. (Read this file to create parameter-based\
+        \ conditions for the generator.)\n"
   - agent_token:
       type: password
       required: true
