@@ -1,11 +1,12 @@
 name: jetbrains/dynamic-build-chain-settings-generator
 version: 1.0.0
 title: Dynamic Build Chain Settings Generator
-description: "A two-step recipe that can be used to dynamically generate settings\
-  \ for a build chain.\nThis recipe executes the generation step and publishes the\
-  \ settings as an artifact.\nThis recipe prepares an environment so that the DSL\
-  \ runs as if it were generating settings\nwithin the context of your project. To\
-  \ do so, it needs credentials with EDIT permissions to\nthe project. \n"
+description: |
+  A two-step recipe that can be used to dynamically generate settings for a build chain.
+  This recipe executes the generation step and publishes the settings as an artifact.
+  This recipe prepares an environment so that the DSL runs as if it were generating settings
+  within the context of your project. To do so, it needs credentials with EDIT permissions to
+  the project.
 inputs:
   - SERVER_URL:
       type: text
@@ -16,10 +17,11 @@ inputs:
       default: '%teamcity.serverUrl%'
   - PROJECT_ID:
       type: text
-      required: true
+      required: false
       label: Project ID
       description: |
         The project ID whose generated configs are relative to.
+      default: '%teamcity.project.id%'
   - env.input_params:
       type: text
       required: false
